@@ -7,6 +7,8 @@ class Graph {
 
   public:
     std::map<unsigned int,std::unordered_set<unsigned int>>  graph;
+    unsigned int vertices;
+    unsigned int edges;
 
     Graph(std::string fileName);
 

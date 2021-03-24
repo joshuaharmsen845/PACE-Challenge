@@ -5,53 +5,59 @@
 #include "graph.h"
 
 Graph::Graph(std::string fileName) {
-    //std::map<unsigned int,std::unordered_set<unsigned int>>  graph;
     std::string line;
     std::ifstream file(fileName);
 
     if (file.is_open()) {
-      std::getline(file, line);
+      std::getline(file, line); // Get the first line
+      line = line.substr(6);
+      int sep = line.find(' ');
+      vertices = stoi(line.substr(0, sep)); //Get the vertex count
+      edges = stoi(line.substr(sep));       //Get the edge count
+
       while (std::getline(file, line)) {
-      //  std::cout << line << std::endl;
+      // if (!(line[0] == 'p' || line[0] == 'c')) { REMOVED FOR EFFICIEnCY
+      // WILL BE AN ISSUE IF WE HAVE A COMMENT LINE IN THE .GR INPUT
 
-      //  if (!(line[0] == 'p' || line[0] == 'c')) { TO IMPROVE EFFICIENCY - UNSAFE
           int sep = line.find(' ');
-          unsigned int key = stoi(line.substr(0, sep));
-          unsigned int val = stoi(line.substr(sep)); // ISSUES IF COMMENT ON LINE
-        //  std::cout << key << std::endl;
-        //  std::cout << val << std::endl;
-          bool keyInGraph = (graph.find(key) != graph.end());
-          bool valInGraph = (graph.find(val) != graph.end());
+          unsigned int u = stoi(line.substr(0, sep)); //Separate by the space
+          unsigned int v = stoi(line.substr(sep));    //to get the vertices
+          // ISSUES IF COMMENT ON END OF LINE
 
-          if (!keyInGraph) {// if no entry exists
-            if (!valInGraph) { // neither has entry, make both
-              std::unordered_set <unsigned int> usK;
-              usK.insert(val);
-              graph.insert(
-                std::pair <unsigned int,std::unordered_set<unsigned int>>(key, usK));
+          bool uInGraph = (graph.find(u) != graph.end());
+          bool vInGraph = (graph.find(v) != graph.end());
 
-              std::unordered_set <unsigned int> usV;
-              usV.insert(key);
+          if (!uInGraph) {    // If u is not yet in the graoh
+            if (!vInGraph) {  // If v is not yet in the Graph
+              //Create entries for both
+              std::unordered_set <unsigned int> setU;
+              setU.insert(v);
               graph.insert(
-                std::pair <unsigned int,std::unordered_set<unsigned int>>(val, usV));
+                std::pair <unsigned int,std::unordered_set<unsigned int>>(u, setU));
 
-            } else { //val is in graph, key isn't
-              std::unordered_set <unsigned int> usV;
-              usV.insert(val);
+              std::unordered_set <unsigned int> setV;
+              setV.insert(u);
               graph.insert(
-                std::pair <unsigned int,std::unordered_set<unsigned int>>(key, usV));
-              graph.find(val)->second.insert(key);
+                std::pair <unsigned int,std::unordered_set<unsigned int>>(v, setV));
+
+            } else {            //If v is in graph, but u isn't
+              std::unordered_set <unsigned int> setV;
+              setV.insert(v);
+              graph.insert(
+                std::pair <unsigned int,std::unordered_set<unsigned int>>(u, setV));
+
+              graph.find(v)->second.insert(u);  //Insert u into v's set
             }
-          } else if (!valInGraph) { //key is in graph, val isn't
-              std::unordered_set <unsigned int> usK;
-              usK.insert(key);
+          } else if (!vInGraph) { //If u is in the graph, but v isn't
+              std::unordered_set <unsigned int> setU;
+              setU.insert(u);
               graph.insert(
-                std::pair <unsigned int,std::unordered_set<unsigned int>>(val, usK));
-              graph.find(key)->second.insert(val);
+                std::pair <unsigned int,std::unordered_set<unsigned int>>(v, setU));
 
-            } else {
-              graph.find(val)->second.insert(key);
-              graph.find(key)->second.insert(val);
+              graph.find(u)->second.insert(v);  //Insert v into u's set
+            } else { //If u and v are both in the graph, just insert
+              graph.find(v)->second.insert(u);
+              graph.find(u)->second.insert(v);
             }
         //}
       }
@@ -62,10 +68,9 @@ Graph::Graph(std::string fileName) {
   }
 
 void Graph::printGraph() {
-    std::cout << "printing" << std::endl;
-    for (auto entry: graph) {
-      std::cout << entry.first << " -> ";
-      for (auto i: entry.second)
+    for (auto key: graph) {     //For every vertex in the graph
+      std::cout << key.first << " -> ";
+      for (auto i: key.second) //For every vertex in key's unordered_set
         std::cout << i << " ";
       std::cout << std::endl;
     }

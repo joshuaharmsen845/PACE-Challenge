@@ -10,10 +10,11 @@ Graph::Graph(std::string fileName) {
     std::ifstream file(fileName);
 
     if (file.is_open()) {
+      std::getline(file, line);
       while (std::getline(file, line)) {
-        std::cout << line << std::endl;
+      //  std::cout << line << std::endl;
 
-        if (!(line[0] == 'p' || line[0] == 'c')) {
+      //  if (!(line[0] == 'p' || line[0] == 'c')) { TO IMPROVE EFFICIENCY - UNSAFE
           int sep = line.find(' ');
           unsigned int key = stoi(line.substr(0, sep));
           unsigned int val = stoi(line.substr(sep)); // ISSUES IF COMMENT ON LINE
@@ -52,7 +53,7 @@ Graph::Graph(std::string fileName) {
               graph.find(val)->second.insert(key);
               graph.find(key)->second.insert(val);
             }
-        }
+        //}
       }
     } else {
       std::cout << "Error. File not found." << std::endl;
@@ -68,4 +69,20 @@ void Graph::printGraph() {
         std::cout << i << " ";
       std::cout << std::endl;
     }
+}
+
+std::unordered_set<unsigned int> Graph::operator [](int i) {
+  return graph[i];
+}
+
+//Requires both u and v to exist already
+void Graph::addEdge(unsigned int u, unsigned int v) {
+  graph.find(v)->second.insert(u);
+  graph.find(u)->second.insert(v);
+}
+
+//Requires both u and v to exist already
+void Graph::cutEdge(unsigned int u, unsigned int v) {
+  graph.find(v)->second.erase(u);
+  graph.find(u)->second.erase(v);
 }

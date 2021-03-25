@@ -1,6 +1,7 @@
 Initialization:
   - Read input into our graph class
   - Create a list for changed edges
+  - potentially a stack/queue class since they might be useful for some functions
     - Remember to pass these as references so we do not overload our memory
 Solving
   - Some sort of clique checker, label those V/E as untouchable, if this is fast we should run it after every algorithm that changes edges

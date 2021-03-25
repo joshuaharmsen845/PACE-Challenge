@@ -1,0 +1,16 @@
+Initialization:
+  - Read input into our graph class
+  - Create a list for changed edges
+    - Remember to pass these as references so we do not overload our memory
+Solving
+  - Some sort of clique checker, label those V/E as untouchable, if this is fast we should run it after every algorithm that changes edges
+  - Find the connectedness of every vertex in the graph
+  - Find "almost cliques" and make them cliques, add as untouchables
+    - Everything left at this point should be somewhere inbetween all deletions or all additions being obvious
+  - Use connectedness to cut bridges and make smaller clusters
+  - (run clique checker)
+  - Use connectedness with conflict triples for more precise deletion and addition inside clusters
+    - Potentially cut pieces out of a cluster that don't work or simply add and delete lines to make cliques
+    - Should judge what to do based on the connectedness % of each node in a cluster
+  - (run clique checker)
+  - Output/return the final list of moves

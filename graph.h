@@ -10,7 +10,7 @@ class Graph {
     int vertices;
     int edges;
 
-    Graph(std::string fileName);
+    Graph();
 
     std::unordered_set<int> operator [](int i);
 

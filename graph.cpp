@@ -4,68 +4,62 @@
 #include <map>
 #include "graph.h"
 
-Graph::Graph(std::string fileName) {
+Graph::Graph() {
     std::string line;
-    std::ifstream file(fileName);
 
-    if (file.is_open()) {
-      std::getline(file, line); // Get the first line
-      line = line.substr(6);
-      int sep = line.find(' ');
-      vertices = stoi(line.substr(0, sep)); //Get the vertex count
-      edges = stoi(line.substr(sep));       //Get the edge count
+    std::getline(std::cin, line); // Get the first line
+    line = line.substr(6);
+    int sep = line.find(' ');
+    vertices = stoi(line.substr(0, sep)); //Get the vertex count
+    edges = stoi(line.substr(sep));       //Get the edge count
 
-      while (std::getline(file, line)) {
-      // if (!(line[0] == 'p' || line[0] == 'c')) { REMOVED FOR EFFICIEnCY
-      // WILL BE AN ISSUE IF WE HAVE A COMMENT LINE IN THE .GR INPUT
+    while (std::getline(std::cin, line)) {
+    // if (!(line[0] == 'p' || line[0] == 'c')) { REMOVED FOR EFFICIEnCY
+    // WILL BE AN ISSUE IF WE HAVE A COMMENT LINE IN THE .GR INPUT
 
-          int sep = line.find(' ');
-          int u = stoi(line.substr(0, sep)); //Separate by the space
-          int v = stoi(line.substr(sep));    //to get the vertices
-          // ISSUES IF COMMENT ON END OF LINE
+        int sep = line.find(' ');
+        int u = stoi(line.substr(0, sep)); //Separate by the space
+        int v = stoi(line.substr(sep));    //to get the vertices
+        // ISSUES IF COMMENT ON END OF LINE
 
-          bool uInGraph = (graph.find(u) != graph.end());
-          bool vInGraph = (graph.find(v) != graph.end());
+        bool uInGraph = (graph.find(u) != graph.end());
+        bool vInGraph = (graph.find(v) != graph.end());
 
-          if (!uInGraph) {    // If u is not yet in the graoh
-            if (!vInGraph) {  // If v is not yet in the Graph
-              //Create entries for both
-              std::unordered_set <int> setU;
-              setU.insert(v);
-              graph.insert(
-                std::pair <int,std::unordered_set<int>>(u, setU));
+        if (!uInGraph) {    // If u is not yet in the graoh
+          if (!vInGraph) {  // If v is not yet in the Graph
+            //Create entries for both
+            std::unordered_set <int> setU;
+            setU.insert(v);
+            graph.insert(
+              std::pair <int,std::unordered_set<int>>(u, setU));
 
-              std::unordered_set <int> setV;
-              setV.insert(u);
-              graph.insert(
-                std::pair <int,std::unordered_set<int>>(v, setV));
+            std::unordered_set <int> setV;
+            setV.insert(u);
+            graph.insert(
+              std::pair <int,std::unordered_set<int>>(v, setV));
 
-            } else {            //If v is in graph, but u isn't
-              std::unordered_set <int> setV;
-              setV.insert(v);
-              graph.insert(
-                std::pair <int,std::unordered_set<int>>(u, setV));
+          } else {            //If v is in graph, but u isn't
+            std::unordered_set <int> setV;
+            setV.insert(v);
+            graph.insert(
+              std::pair <int,std::unordered_set<int>>(u, setV));
 
-              graph.find(v)->second.insert(u);  //Insert u into v's set
-            }
-          } else if (!vInGraph) { //If u is in the graph, but v isn't
-              std::unordered_set <int> setU;
-              setU.insert(u);
-              graph.insert(
-                std::pair <int,std::unordered_set<int>>(v, setU));
+            graph.find(v)->second.insert(u);  //Insert u into v's set
+          }
+        } else if (!vInGraph) { //If u is in the graph, but v isn't
+            std::unordered_set <int> setU;
+            setU.insert(u);
+            graph.insert(
+              std::pair <int,std::unordered_set<int>>(v, setU));
 
-              graph.find(u)->second.insert(v);  //Insert v into u's set
-            } else { //If u and v are both in the graph, just insert
-              graph.find(v)->second.insert(u);
-              graph.find(u)->second.insert(v);
-            }
-        //}
-      }
-    } else {
-      std::cout << "Error. File not found." << std::endl;
+            graph.find(u)->second.insert(v);  //Insert v into u's set
+          } else { //If u and v are both in the graph, just insert
+            graph.find(v)->second.insert(u);
+            graph.find(u)->second.insert(v);
+          }
+      //}
     }
-    file.close();
-  }
+}
 
 void Graph::printGraph() {
   std::cout  << "Vertices: " << vertices << std::endl;

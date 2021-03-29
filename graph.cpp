@@ -2,6 +2,7 @@
 #include <fstream>
 #include <unordered_set>
 #include <map>
+#include <queue>
 #include "graph.h"
 
 Graph::Graph() {
@@ -95,6 +96,7 @@ bool Graph::hasEdge(int u, int v) {
   return false;
 }
 
+//Simply makes sure all elements in the clique have edges to one another
 bool Graph::cliqueCheck(std::unordered_set<int> clique) {
   for (auto u: clique)
     for (auto v: clique)
@@ -103,7 +105,6 @@ bool Graph::cliqueCheck(std::unordered_set<int> clique) {
           return false;
   return true;
 }
-
 
 std::unordered_set<int> Graph::findClique(int startNode) {
   std::unordered_set<int> clique;
@@ -130,4 +131,34 @@ std::unordered_set<int> Graph::findClique(int startNode) {
   }
 
   return maxClique;
+}
+
+//Uses BFS to check whole cluster, returns as unordered_set
+std::unordered_set<int> Graph::findCluster(int startNode) {
+    std::unordered_set<int> cluster;
+    std::queue<int> q;
+
+    q.push(startNode);
+    cluster.insert(startNode);
+    while (!q.empty()) {
+      int v = q.front();    //Get the popped node
+      q.pop();
+
+      for (auto neighbor: graph[v]) {   //Insert popped node's neighbors
+        if (cluster.find(neighbor) == cluster.end()) {
+          q.push(neighbor);
+          cluster.insert(neighbor);
+        }
+      }
+    }
+
+    return cluster;
+}
+
+float Graph::connectedness(int startNode) {
+  float edges = (float)graph[startNode].size();
+  float clusterSize = (float)findCluster(startNode).size();
+  
+  std::cout << "Edges: " << edges << " /// Cluster Size: " << clusterSize << std::endl;
+  return edges/clusterSize;
 }

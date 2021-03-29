@@ -26,4 +26,7 @@ class Graph {
 
     std::unordered_set<int> findClique(int startNode);
 
+    std::unordered_set<int> findCluster(int startNode);
+
+    float connectedness(int startNode);
 };

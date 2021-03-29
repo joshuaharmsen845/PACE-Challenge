@@ -1,6 +1,3 @@
-
-# Variables to control Makefile operation
-
 CC = g++
 CFLAGS = -Wall -g
 

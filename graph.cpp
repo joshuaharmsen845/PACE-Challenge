@@ -158,7 +158,7 @@ std::unordered_set<int> Graph::findCluster(int startNode) {
 float Graph::connectedness(int startNode) {
   float edges = (float)graph[startNode].size();
   float clusterSize = (float)findCluster(startNode).size();
-  
+
   std::cout << "Edges: " << edges << " /// Cluster Size: " << clusterSize << std::endl;
   return edges/clusterSize;
 }

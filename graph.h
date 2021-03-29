@@ -6,24 +6,18 @@
 class Graph {
 
   public:
-    std::map<int,std::unordered_set<int>>  graph;
-    int vertices;
-    int edges;
+    std::map<unsigned int,std::unordered_set<unsigned int>>  graph;
+    unsigned int vertices;
+    unsigned int edges;
 
-    Graph();
+    Graph(std::string fileName);
 
-    std::unordered_set<int> operator [](int i);
+    std::unordered_set<unsigned int> operator [](int i);
 
     void printGraph();
 
-    void addEdge(int u, int v);
+    void addEdge(unsigned int u, unsigned int v);
 
-    void cutEdge(int u, int v);
-
-    bool hasEdge(int u, int v);
-
-    bool cliqueCheck(std::unordered_set<int> clique);
-
-    std::unordered_set<int> findClique(int startNode);
+    void cutEdge(unsigned int u, unsigned int v);
 
 };

@@ -162,3 +162,13 @@ float Graph::connectedness(int startNode) {
   std::cout << "Edges: " << edges << " /// Cluster Size: " << clusterSize << std::endl;
   return edges/clusterSize;
 }
+
+//Computes the cost of deleting all edges from the clique to the outside graph
+int Graph::cliqueCost(std::unordered_set<int> clique) {
+  int count = 0;
+  for (auto node: clique)
+    for (auto neighbor: graph[node])
+      if(clique.find(neighbor) == clique.end())
+        count ++;
+  return count;
+}

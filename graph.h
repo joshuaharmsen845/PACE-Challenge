@@ -29,4 +29,6 @@ class Graph {
     std::unordered_set<int> findCluster(int startNode);
 
     float connectedness(int startNode);
+
+    int cliqueCost(std::unordered_set<int> clique);
 };

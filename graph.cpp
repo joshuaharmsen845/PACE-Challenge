@@ -90,10 +90,7 @@ void Graph::cutEdge(int u, int v) {
 }
 
 bool Graph::hasEdge(int u, int v) {
-  for (auto elm: graph[u])
-    if (elm == v)
-      return true;
-  return false;
+return (graph[u].find(v) != graph[u].end());
 }
 
 //Simply makes sure all elements in the clique have edges to one another
@@ -108,29 +105,50 @@ bool Graph::cliqueCheck(std::unordered_set<int> clique) {
 
 std::unordered_set<int> Graph::findClique(int startNode) {
   std::unordered_set<int> clique;
-  std::unordered_set<int> maxClique;
+  std::unordered_set<int> bestClique;
+  bestClique.insert(startNode);
+  int edges = 0;
+  int bestEdges = 5000000;
   std::unordered_set<int> startSet = graph[startNode]; //Get all neighbors
   clique.insert(startNode);
+  edges += graph[startNode].size();
 
   for (auto u: startSet) {
     clique.insert(u);             //TRY EVERY POSSIBLE CLIQUE COMBINATION
+    edges += graph[u].size();
     for (auto v: graph[u]) {
-      clique.insert(v);           //TRY TO INSERT U'S NEIGHBOR
-      if (!cliqueCheck(clique))
+      if (v != startNode) {
+        clique.insert(v);           //TRY TO INSERT U'S NEIGHBOR
+        edges += graph[v].size();
+      }
+      if (!cliqueCheck(clique)){
         clique.erase(v);          //UNDO IF WE DON'T HAVE A CLIQUE
-      else
+        edges -= graph[v].size();
+      } else {
         startSet.erase(v);        //If it worked, remove it so we don't duplicate
+      }
     }
-    if (clique.size() > maxClique.size())
-      maxClique = clique;
+    //edges = edges / 2;
+    //std::cout << "edges: " << edges << " and size: " << clique.size() << std::endl;
+    //for (auto elm: clique)
+    //  std::cout << elm << " ";
+    //std::cout << std::endl;
+    if (edges -(clique.size()*(clique.size()-1)) < //MINIMIZE EXTRA EDGES IN CLIQUE
+        bestEdges - (bestClique.size()*(bestClique.size())-1)) {
+      bestClique = clique;
+      bestEdges = edges;
+    }
     //for (auto elm: clique)
     //  std::cout << elm << " ";
     //std::cout << std::endl;
     clique.clear();               //CLEAR AND TRY AGAIN
     clique.insert(startNode);
+    edges = graph[startNode].size();
   }
 
-  return maxClique;
+  std::cout << "Choose clique of size: " << bestClique.size() <<
+    " with " << bestEdges << " edges." << std::endl;
+  return bestClique;
 }
 
 //Uses BFS to check whole cluster, returns as unordered_set
@@ -166,9 +184,46 @@ float Graph::connectedness(int startNode) {
 //Computes the cost of deleting all edges from the clique to the outside graph
 int Graph::cliqueCost(std::unordered_set<int> clique) {
   int count = 0;
-  for (auto node: clique)
-    for (auto neighbor: graph[node])
-      if(clique.find(neighbor) == clique.end())
-        count ++;
+  int adds = 0;
+  int cuts = 0;
+  std::unordered_set<int> handled;
+
+  for (auto node: clique) { //For every node in the clique
+    for (auto neighbor: graph[node]) { //For every neighbor of said node
+      if (handled.find(neighbor) == handled.end()) {//If we have not yet handled neighbor
+        handled.insert(neighbor);
+        if (clique.find(neighbor) == clique.end()) {//If the neighbor is not in clique
+          for (auto v: clique) { //Check all possible clique connections
+            if (hasEdge(neighbor, v)) //Check if we should cut or add to clique
+              cuts ++; //Store cuts somewhere later
+            else
+              adds ++; //Store additions somewhere later
+          }
+        //  std::cout << "Current node is: " << neighbor << std::endl;
+        //  std::cout << "Adds: " << adds << std::endl;
+        //  std::cout << "Cuts: " << cuts << std::endl << std:: endl;
+        }
+
+      if (cuts <= adds){
+        count += cuts;
+      }
+      else {
+        clique.insert(neighbor);
+        count += adds;
+      }
+      adds = 0;
+      cuts = 0;
+      }
+    }
+  }
+
+  int size = 0;
+  std::cout << "Formed the cluster: " << std::endl;
+  for (auto elm: clique){
+    std::cout << elm << " ";
+    size ++;
+  }
+  std::cout << std::endl;
+  std::cout << "New size: " << size << std::endl;
   return count;
 }

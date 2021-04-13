@@ -22,7 +22,7 @@ class Graph {
 
     bool hasEdge(int u, int v);
 
-    bool cliqueCheck(std::unordered_set<int> clique);
+    bool cliqueCheck(std::unordered_set<int>& clique);
 
     std::unordered_set<int> findClique(int startNode);
 
@@ -30,5 +30,5 @@ class Graph {
 
     float connectedness(int startNode);
 
-    int cliqueCost(std::unordered_set<int> clique);
+    int cliqueCost(std::unordered_set<int>& clique);
 };

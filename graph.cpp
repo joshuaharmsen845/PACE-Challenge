@@ -5,6 +5,7 @@
 #include <queue>
 #include "graph.h"
 
+
 Graph::Graph() {
     std::string line;
 
@@ -85,8 +86,11 @@ void Graph::addEdge(int u, int v) {
 
 //Requires both u and v to exist already
 void Graph::cutEdge(int u, int v) {
+  //printGraph();
+  //std::cout << "CUTTING" << std::endl;
   graph.find(v)->second.erase(u);
   graph.find(u)->second.erase(v);
+//  printGraph();
 }
 
 bool Graph::hasEdge(int u, int v) {
@@ -94,7 +98,7 @@ return (graph[u].find(v) != graph[u].end());
 }
 
 //Simply makes sure all elements in the clique have edges to one another
-bool Graph::cliqueCheck(std::unordered_set<int> clique) {
+bool Graph::cliqueCheck(std::unordered_set<int>& clique) {
   for (auto u: clique)
     for (auto v: clique)
       if (u != v)
@@ -146,8 +150,8 @@ std::unordered_set<int> Graph::findClique(int startNode) {
     edges = graph[startNode].size();
   }
 
-  std::cout << "Choose clique of size: " << bestClique.size() <<
-    " with " << bestEdges << " edges." << std::endl;
+  // std::cout << "Choose clique of size: " << bestClique.size() <<
+  //   " with " << bestEdges << " edges." << std::endl;
   return bestClique;
 }
 
@@ -182,48 +186,100 @@ float Graph::connectedness(int startNode) {
 }
 
 //Computes the cost of deleting all edges from the clique to the outside graph
-int Graph::cliqueCost(std::unordered_set<int> clique) {
+int Graph::cliqueCost(std::unordered_set<int>& clique) {
   int count = 0;
   int adds = 0;
   int cuts = 0;
+  std::unordered_set<std::string> addStrings;
+  std::unordered_set<std::string> cutStrings;
   std::unordered_set<int> handled;
+  std::unordered_set<int> addList;
+  std::unordered_set<int> cutList;
+  std::queue<int> q;
 
-  for (auto node: clique) { //For every node in the clique
-    for (auto neighbor: graph[node]) { //For every neighbor of said node
-      if (handled.find(neighbor) == handled.end()) {//If we have not yet handled neighbor
+  for (auto elm: clique)
+    q.push(elm);
+
+  while (!q.empty()) { //For every node in the clique, even if we add
+    int node = q.front();
+    q.pop();
+
+    std::queue<int> neighbors; //Initialize queue to hold neighbors
+    for (auto elm: graph[node])
+      neighbors.push(elm);
+
+    while  (!neighbors.empty()) {
+    int neighbor = neighbors.front(); //Get popped neighbor
+    neighbors.pop();
+    if (cutList.find(neighbor) == cutList.end()) { //If we haven't cut this already
+       if (handled.find(neighbor) == handled.end()) {//If we have not yet handled neighbor
         handled.insert(neighbor);
         if (clique.find(neighbor) == clique.end()) {//If the neighbor is not in clique
           for (auto v: clique) { //Check all possible clique connections
-            if (hasEdge(neighbor, v)) //Check if we should cut or add to clique
+            if (hasEdge(neighbor, v)) { //Check if we should cut or add to clique
               cuts ++; //Store cuts somewhere later
-            else
-              adds ++; //Store additions somewhere later
+              cutStrings.insert(std::to_string(neighbor) + " " + std::to_string(v));
+            } else {
+              adds ++; //Store added somewhere later
+              addStrings.insert(std::to_string(neighbor) + " " + std::to_string(v));
+            }
           }
-        //  std::cout << "Current node is: " << neighbor << std::endl;
-        //  std::cout << "Adds: " << adds << std::endl;
-        //  std::cout << "Cuts: " << cuts << std::endl << std:: endl;
         }
 
-      if (cuts <= adds){
-        count += cuts;
-      }
-      else {
-        clique.insert(neighbor);
-        count += adds;
-      }
-      adds = 0;
-      cuts = 0;
+        if (cuts <= adds){
+          //std::cout << "Cutting" << std::endl;
+          count += cuts;
+          for (std::string edge: cutStrings) {
+            //std::cout << "EDGE: " << edge << std::endl;
+            int sep = edge.find(' ');
+            int u = stoi(edge.substr(0, sep)); //Separate by the space
+            int v = stoi(edge.substr(sep));    //to get the vertices
+            cutList.insert(u);
+            std::cout << edge << std::endl;
+            cutEdge(u, v); //causing seg fault somewhere?
+
+          }
+        }
+        else {
+          //std::cout << "Adding" << std::endl;
+          clique.insert(neighbor);
+          q.push(neighbor);
+          count += adds;
+          for (std::string edge: addStrings) {
+            //std::cout << "EDGE:" << edge << std::endl;
+            int sep = edge.find(' ');
+            int u = stoi(edge.substr(0, sep)); //Separate by the space
+            int v = stoi(edge.substr(sep));    //to get the vertices
+            addList.insert(u);
+            std::cout << edge << std::endl;
+            addEdge(u, v);
+          }
+        }
+        adds = 0;
+        addStrings.clear();
+        cuts = 0;
+        cutStrings.clear();
+        }
       }
     }
   }
 
-  int size = 0;
-  std::cout << "Formed the cluster: " << std::endl;
-  for (auto elm: clique){
-    std::cout << elm << " ";
-    size ++;
-  }
-  std::cout << std::endl;
-  std::cout << "New size: " << size << std::endl;
+
+  // int size = 0;
+  // std::cout << "Formed the cluster: " << std::endl;
+  // for (auto elm: clique){
+  //   std::cout << elm << " ";
+  //   size ++;
+  // }
+  // std::cout << std::endl;
+  // std::cout << "New size: " << size << std::endl;
+  // //printGraph();
+
+  for (auto u: addList)
+    for (auto v: cutList)
+      if (hasEdge(u,v)) {
+        std::cout << u << " " << v << std::endl;
+        cutEdge(u, v);
+      }
   return count;
 }

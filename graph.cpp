@@ -283,3 +283,44 @@ int Graph::cliqueCost(std::unordered_set<int>& clique) {
       }
   return count;
 }
+
+void Graph::clique_it(std::unordered_set<int> cluster) {
+  for (size_t i = 0; i < cluster.size(); i++) { //These are not the elements of the cluster
+    std::unordered_set<int> neighbors = graph[i];
+    std::unordered_set<int> not_nei = cluster;
+    for (size_t j = i + 1; j < neighbors.size(); j++) {
+      for (size_t k = 0; k < cluster.size(); k++) {
+        if (cluster[k] == neighbors[j]) //Cannot iterate
+          not_nei.erase(cluster[k]); //Cannot iterate
+      }
+    }
+    for (size_t l = 0; l < not_nei.size(); l++) //These are not the elements of not_nei
+      addEdge(i, l);
+  }
+}
+
+void Graph::break_it(std::unordered_set<int> cluster) {
+  for (size_t i = 0; i < cluster.size(); i++) { //These are not the elements of the cluster
+    std::unordered_set<int> neighbors = graph[i];
+    for (size_t j = i + 1; j < neighbors.size(); j++) {
+      for (size_t k = 0; k < cluster.size(); k++)        //Does this cut E/2 edges or all of them? We can get away with E/2.
+        if (cluster[k] == neighbors[j]) //Cannot iterate
+          cutEdge(i, j);
+    }
+  }
+}
+
+void Graph::large_file() {
+  for (size_t i = 0; i < graph.size(); i++) { //Deal with some cluster, but then deal with it again.
+    float con = 0;                            //Consider the cluster {1, 2, 3}, we do 3x the work
+    std::unordered_set<int> cluster = findCluster(i);
+    int max_con = cluster.size() * (cluster.size() - 1);
+    for (size_t j = 0; j < cluster.size(); j++) //These are not the elements of the cluster
+      con += connectedness(j);
+    float con_per = con / max_con;
+    if (con_per < .5)
+      clique_it(cluster);
+    else
+      break_it(cluster);
+  }
+}

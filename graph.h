@@ -31,4 +31,10 @@ class Graph {
     float connectedness(int startNode);
 
     int cliqueCost(std::unordered_set<int>& clique);
+
+    void clique_it(std::unordered_set<int> cluster);
+
+    void break_it(std::unordered_set<int> cluster);
+
+    void large_file();
 };

@@ -2,7 +2,7 @@ void Graph::clique_it(std::unordered_set<int> cluster) {
   for (auto i: cluster) {
     std::unordered_set<int> neighbors = graph[i];
     std::unordered_set<int> not_nei = cluster;
-    for (auot j: neighbor) {
+    for (auto j: neighbor) {
       for (auto k: cluster) {
         if (k == j)
           not_nei.erase(k);

@@ -40,7 +40,7 @@ void Graph::large_file() {
           iter = true;
       }
     }
-    if !iter
+    if (!iter)
       if (con_per < .5)
         clique_it(cluster);
       else

@@ -16,6 +16,8 @@ class Graph {
 
     void printGraph();
 
+    void cutAll();
+
     void addEdge(int u, int v);
 
     void cutEdge(int u, int v);

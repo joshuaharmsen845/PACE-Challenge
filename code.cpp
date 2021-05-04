@@ -3,12 +3,21 @@
 #include <unordered_set>
 #include <map>
 #include <queue>
+#include <csignal>
 #include "graph.h"
 
+Graph graph = Graph();
+
+void signalHandler( int signum ) {
+   //std::cout << "Interrupt signal (" << signum << ") received.\n";
+   graph.cutAll();
+
+   exit(signum);
+}
 
 int main(int argc,  char* argv[]) {
+  signal(SIGTERM, signalHandler);
 
-  Graph graph = Graph();
 
   std::queue<int> q;
   std::unordered_set<int> toHandle;

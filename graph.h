@@ -16,7 +16,7 @@ class Graph {
 
     void printGraph();
 
-    void cutAll();
+    void cutAll(std::unordered_set<int> unHandled);
 
     void addEdge(int u, int v);
 

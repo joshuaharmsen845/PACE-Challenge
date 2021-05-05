@@ -7,10 +7,11 @@
 #include "graph.h"
 
 Graph graph = Graph();
+std::unordered_set<int> toHandle;
 
 void signalHandler( int signum ) {
    //std::cout << "Interrupt signal (" << signum << ") received.\n";
-   graph.cutAll();
+   graph.cutAll(toHandle);
 
    exit(signum);
 }
@@ -20,7 +21,6 @@ int main(int argc,  char* argv[]) {
 
 
   std::queue<int> q;
-  std::unordered_set<int> toHandle;
   for (int i = 1; i <= graph.vertices; i++){
     q.push(i);
     toHandle.insert(i);

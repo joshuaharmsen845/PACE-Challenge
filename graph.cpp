@@ -74,11 +74,32 @@ void Graph::printGraph() {
   }
 }
 
-void Graph::cutAll() {
+void Graph::cutAll(std::unordered_set<int> unHandled) {
+//  std::map<int, int> partners;
+//  for (auto elm: unHandled)
+//    partners.insert(std::pair <int,int> (elm, -1)); //Populate partners
+
+  //int count = 0;
   for (auto key: graph) {     //For every vertex in the graph
-    for (auto i: key.second) //For every vertex in key's unordered_set
-      std::cout << i << " " << key.first << std::endl;
+    if (unHandled.find(key.first) != unHandled.end()){ //If we have not handled
+      // if (partners.find(key.first)->second == -1) { //If it does not have a partner
+      //   for (auto neighbor: graph[key.first]) {
+      //     std::cout << "Making partners " << key.first << " and " << neighbor << std::endl;
+      //     partners.find(key.first)->second = neighbor;
+      //     partners.find(neighbor)->second = key.first;
+      //     break;
+      //   }
+      // }
+      for (auto i: key.second) {//For every vertex in key's unordered_set
+        //if (partners.find(key.first)->second != i) {
+          //count = count + 1;
+          std::cout << i << " " << key.first << std::endl;
+          cutEdge(i, key.first);
+        //}
+      }
+    }
   }
+  //std::cout << "Count: "<< count << std::endl;
 }
 
 std::unordered_set<int> Graph::operator [](int i) {

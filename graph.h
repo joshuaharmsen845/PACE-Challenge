@@ -3,10 +3,23 @@
 #include <unordered_set>
 #include <map>
 
+
+/*
+  Joshua Harmsen and AJ Zuckerman
+
+  PACE  Challenge 2021 - Cluster Editing
+  May 2021
+
+  A nuanced approach to cluster editing which utilizes existing cliques in the
+  formation of "complete" clusters by considering whether to add or cut
+  a vertex from the cluster piece-wise.
+*/
+
+
 class Graph {
 
   public:
-    std::map<int,std::unordered_set<int>>  graph;
+    std::map<int,std::unordered_set<int>> graph;
     int vertices;
     int edges;
 
@@ -32,11 +45,11 @@ class Graph {
 
     float connectedness(int startNode);
 
-    int cliqueCost(std::unordered_set<int>& clique);
+    int formCluster(std::unordered_set<int>& clique);
 
-    void clique_it(std::unordered_set<int> cluster);
+    //void clique_it(std::unordered_set<int> cluster);
 
-    void break_it(std::unordered_set<int> cluster);
+    //void break_it(std::unordered_set<int> cluster);
 
-    void large_file();
+    //void large_file();
 };

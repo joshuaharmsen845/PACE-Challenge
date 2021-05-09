@@ -1,4 +1,4 @@
-// Conflict Triples
+// Conflict Triples - DEPRECATED
 // A.J. Zuckerman and Josh Harmsen
 // Checks for conflict triples in a passed cluster and decides what to do with them
 

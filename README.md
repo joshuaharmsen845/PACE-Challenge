@@ -12,4 +12,4 @@ Instalation can be done by running the makefile with "make" and the program can
 be executed with "./pace < graphfile.gr"
 
 
-Solver Description PDF: https://tinyurl.com/PACE-paper
+Solver Description PDF: https://drive.google.com/file/d/1o6nQSbT3TiKcH0IoClpGO40EVSCMzAjP/view?usp=sharing
